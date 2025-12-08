@@ -323,6 +323,22 @@ body {
   gap: 8px;
 }
 
+.info-icon {
+  color: var(--accent-green);
+  min-width: 20px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 .info-label {
   color: var(--accent-cyan);
   min-width: 100px;
