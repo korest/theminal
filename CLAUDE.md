@@ -43,7 +43,7 @@ A terminal-inspired Hugo theme for developer blogs. Mimics a terminal window wit
 - `/home`, `/articles`, `/resume` - Navigation
 - `/search <query>` - Search articles
 - `/theme` - Toggle dark/light
-- `/github`, `/twitter`, `/linkedin`, `/email` - Social links (if configured)
+- `/github`, `/x`, `/linkedin`, `/email` - Social links (if configured)
 
 ## Configuration (hugo.toml)
 
@@ -62,7 +62,7 @@ Key params:
 
   [params.social]
     github = "username"
-    twitter = "username"
+    x = "username"
 
   # Custom commands
   [[params.commands]]

@@ -35,7 +35,7 @@ Edit `hugo.toml`:
 
   [params.social]
     github = "yourusername"
-    twitter = "yourusername"
+    x = "yourusername"
     linkedin = "yourusername"
 ```
 

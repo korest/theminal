@@ -72,7 +72,7 @@ theme = 'theminal'
   # Social links (used in mini-terminal commands and info block)
   [params.social]
     github = "yourusername"
-    twitter = "yourusername"
+    x = "yourusername"
     linkedin = "yourusername"
 
   # Enable syntax highlighting for code blocks
