@@ -37,6 +37,11 @@
 
     if (results.length === 0) {
       searchResults.innerHTML = `
+        <div class="search-header">
+          <span class="search-count">0 results</span>
+          <span class="search-query">for "${escapeHtml(query)}"</span>
+          <button class="search-close" onclick="window.clearSearch()">[x] close</button>
+        </div>
         <div class="search-no-results">
           <span class="search-icon">?</span>
           No results found for "<strong>${escapeHtml(query)}</strong>"
