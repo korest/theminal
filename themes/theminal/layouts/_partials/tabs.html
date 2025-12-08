@@ -6,20 +6,20 @@
   </a>
 
   {{/* Articles Tab */}}
-  <a href="{{ "articles/" | relURL }}" class="terminal-tab{{ if eq .Section "articles" }} active{{ end }}" aria-current="{{ if eq .Section "articles" }}page{{ end }}">
+  <a href="{{ "articles/" | absURL }}" class="terminal-tab{{ if eq .Section "articles" }} active{{ end }}" aria-current="{{ if eq .Section "articles" }}page{{ end }}">
     <span class="terminal-tab-icon">></span>
     <span>articles</span>
   </a>
 
   {{/* Resume Tab */}}
-  <a href="{{ "resume/" | relURL }}" class="terminal-tab{{ if eq .Title "Resume" }} active{{ end }}" aria-current="{{ if eq .Title "Resume" }}page{{ end }}">
+  <a href="{{ "resume/" | absURL }}" class="terminal-tab{{ if eq .Title "Resume" }} active{{ end }}" aria-current="{{ if eq .Title "Resume" }}page{{ end }}">
     <span class="terminal-tab-icon">#</span>
     <span>resume</span>
   </a>
 
   {{/* Custom tabs from config */}}
   {{ range site.Params.tabs }}
-  <a href="{{ .url | relURL }}" class="terminal-tab{{ if eq $.Title .name }} active{{ end }}">
+  <a href="{{ .url | absURL }}" class="terminal-tab{{ if eq $.Title .name }} active{{ end }}">
     <span class="terminal-tab-icon">{{ .icon | default ">" }}</span>
     <span>{{ .name }}</span>
   </a>

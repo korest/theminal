@@ -10,7 +10,7 @@
     >
   </div>
   <div class="mini-terminal-suggestions" id="terminal-suggestions">
-    <div class="suggestion-item" data-cmd="/articles" data-url="{{ "articles/" | relURL }}">
+    <div class="suggestion-item" data-cmd="/articles" data-url="{{ "articles/" | absURL }}">
       <span class="suggestion-cmd">/articles</span>
       <span class="suggestion-desc">Browse all articles</span>
     </div>
@@ -36,7 +36,7 @@
       <span class="suggestion-desc">LinkedIn profile</span>
     </div>
     {{ end }}
-    <div class="suggestion-item" data-cmd="/resume" data-url="{{ "resume/" | relURL }}">
+    <div class="suggestion-item" data-cmd="/resume" data-url="{{ "resume/" | absURL }}">
       <span class="suggestion-cmd">/resume</span>
       <span class="suggestion-desc">View resume</span>
     </div>

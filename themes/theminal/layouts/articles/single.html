@@ -22,7 +22,7 @@
     {{ with .Params.tags }}
     <div class="article-tags" style="margin-bottom: 16px;">
       {{ range . }}
-      <a href="{{ "tags/" | relURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
+      <a href="{{ "tags/" | absURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
       {{ end }}
     </div>
     {{ end }}
@@ -54,7 +54,7 @@
 
     {{/* Back to articles */}}
     <div style="margin-top: 16px;">
-      <a href="{{ "articles/" | relURL }}">← Back to all articles</a>
+      <a href="{{ "articles/" | absURL }}">← Back to all articles</a>
     </div>
   </footer>
 </article>
