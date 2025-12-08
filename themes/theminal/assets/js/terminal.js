@@ -11,7 +11,7 @@
   async function loadSearchIndex() {
     if (searchIndex) return searchIndex;
     try {
-      const response = await fetch('/index.json');
+      const response = await fetch(new URL('index.json', document.baseURI).href);
       searchIndex = await response.json();
       return searchIndex;
     } catch (error) {
