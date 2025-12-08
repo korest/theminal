@@ -22,7 +22,7 @@
     {{ with .Params.tags }}
     <div class="article-tags" style="margin-bottom: 16px;">
       {{ range . }}
-      <a href="{{ "tags/" | absURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
+      <a href="{{ "articles/tags/" | absURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
       {{ end }}
     </div>
     {{ end }}

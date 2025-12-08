@@ -15,6 +15,7 @@ theme = 'theminal'
 # Permalinks
 [permalinks]
   articles = '/articles/:slug/'
+  tags = '/articles/tags/:slug/'
 
 # Output formats (RSS + JSON for search)
 [outputs]

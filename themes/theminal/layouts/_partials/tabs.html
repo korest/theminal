@@ -5,8 +5,9 @@
     <span>home</span>
   </a>
 
-  {{/* Articles Tab */}}
-  <a href="{{ "articles/" | absURL }}" class="terminal-tab{{ if eq .Section "articles" }} active{{ end }}" aria-current="{{ if eq .Section "articles" }}page{{ end }}">
+  {{/* Articles Tab - also active for tags */}}
+  {{ $isArticlesActive := or (eq .Section "articles") (eq .Section "tags") }}
+  <a href="{{ "articles/" | absURL }}" class="terminal-tab{{ if $isArticlesActive }} active{{ end }}" aria-current="{{ if $isArticlesActive }}page{{ end }}">
     <span class="terminal-tab-icon">></span>
     <span>articles</span>
   </a>
