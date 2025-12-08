@@ -131,6 +131,16 @@
     updateThemeIcon(getCurrentTheme());
   }
 
+  // Global keyboard shortcut for theme toggle (works on all pages)
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+    if (e.key === 't' || e.key === 'T') {
+      toggleTheme();
+    }
+  });
+
   // ============================================
   // MINI TERMINAL WIDGET
   // ============================================
@@ -316,9 +326,8 @@
     });
   });
 
-  // Global keyboard shortcuts
+  // Global keyboard shortcut for terminal focus (only when terminal exists)
   document.addEventListener('keydown', function(e) {
-    // Don't trigger if already in an input
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
       return;
     }
@@ -330,11 +339,6 @@
       input.value = '/';
       filterSuggestions('/');
       showSuggestions();
-    }
-
-    // Press t to toggle theme
-    if (e.key === 't' || e.key === 'T') {
-      toggleTheme();
     }
   });
 })();
