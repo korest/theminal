@@ -1,6 +1,6 @@
 <nav class="terminal-tabs" role="navigation" aria-label="Main navigation">
   {{/* Home Tab */}}
-  <a href="{{ "/" | relURL }}" class="terminal-tab{{ if .IsHome }} active{{ end }}" aria-current="{{ if .IsHome }}page{{ end }}">
+  <a href="{{ site.Home.RelPermalink }}" class="terminal-tab{{ if .IsHome }} active{{ end }}" aria-current="{{ if .IsHome }}page{{ end }}">
     <span class="terminal-tab-icon">~</span>
     <span>home</span>
   </a>
