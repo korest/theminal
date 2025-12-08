@@ -1,0 +1,133 @@
+# Theminal - Hugo Configuration
+# ================================
+# This is a sample configuration file. Customize it to your needs.
+
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'Terminal Blog'
+theme = 'theminal'
+
+# Enable taxonomies
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+
+# Permalinks
+[permalinks]
+  articles = '/articles/:slug/'
+
+# Output formats (RSS + JSON for search)
+[outputs]
+  home = ['HTML', 'RSS', 'JSON']
+  section = ['HTML', 'RSS']
+
+# JSON output format for search index
+[outputFormats.JSON]
+  mediaType = "application/json"
+  baseName = "index"
+  isPlainText = true
+
+# ===========================================
+# THEME PARAMETERS - Customize these!
+# ===========================================
+[params]
+  # ===========================================
+  # THEME APPEARANCE
+  # ===========================================
+  # Default theme: "dark" or "light"
+  # Users can toggle between themes using the button or pressing 't'
+  # Their preference is saved in localStorage
+  defaultTheme = "dark"
+
+  # Site description (used in meta tags)
+  description = "A terminal-themed blog about technology and programming"
+
+  # Author information
+  author = "Your Name"
+  role = "Software Engineer"
+  location = "San Francisco, CA"
+  email = "hello@example.com"
+
+  # Terminal prompt customization
+  promptUser = "visitor"
+  promptHost = "blog"
+
+  # Welcome message on homepage
+  welcome = "Hello, world! Welcome to my corner of the internet. I write about software, technology, and the occasional random thought."
+
+  # ASCII art (optional - displayed on homepage)
+  # Tip: Use a tool like https://patorjk.com/software/taag/ to generate ASCII art
+  asciiArt = '''
+  _____ _                    _             _
+ |_   _| |__   ___ _ __ ___ (_)_ __   __ _| |
+   | | | '_ \ / _ \ '_ ` _ \| | '_ \ / _` | |
+   | | | | | |  __/ | | | | | | | | | (_| | |
+   |_| |_| |_|\___|_| |_| |_|_|_| |_|\__,_|_|
+'''
+
+  # Number of recent articles to show on homepage
+  recentArticlesCount = 5
+
+  # Social links (used in mini-terminal commands and info block)
+  [params.social]
+    github = "yourusername"
+    twitter = "yourusername"
+    linkedin = "yourusername"
+
+  # Enable syntax highlighting for code blocks
+  syntaxHighlighting = true
+
+  # Show "Powered by Hugo & Theminal" in footer
+  showPoweredBy = true
+
+  # Custom footer text (overrides default)
+  # footerText = "Custom footer text here"
+
+  # Google Analytics (optional)
+  # googleAnalytics = "G-XXXXXXXXXX"
+
+  # Comments - Disqus (optional)
+  # disqusShortname = "your-disqus-shortname"
+
+  # Comments - Giscus (GitHub Discussions) - Recommended!
+  # Get your values from https://giscus.app/
+  # [params.giscus]
+  #   repo = "yourusername/yourrepo"
+  #   repoId = "R_xxxxx"
+  #   category = "Announcements"
+  #   categoryId = "DIC_xxxxx"
+  #   mapping = "pathname"
+
+  # Custom tabs (in addition to home, articles, resume)
+  # [[params.tabs]]
+  #   name = "projects"
+  #   url = "/projects/"
+  #   icon = "*"
+
+  # Custom terminal commands
+  # [[params.commands]]
+  #   name = "blog"
+  #   url = "https://yourblog.com"
+  #   description = "Visit my other blog"
+  #   external = true
+
+# ===========================================
+# MARKUP CONFIGURATION
+# ===========================================
+[markup]
+  [markup.highlight]
+    style = 'monokai'
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = false
+
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+# ===========================================
+# SECURITY (for GitHub Actions deployment)
+# ===========================================
+[security]
+  [security.funcs]
+    getenv = ['^HUGO_', '^CI$']

@@ -1,0 +1,118 @@
+{{ define "main" }}
+{{/* Command prompt */}}
+<div class="prompt">
+  <span class="prompt-user">{{ site.Params.promptUser | default "visitor" }}</span>
+  <span class="prompt-separator">@</span>
+  <span class="prompt-path">{{ site.Params.promptHost | default "blog" }}</span>
+  <span class="prompt-symbol">$</span>
+  <span>whoami</span>
+</div>
+
+{{/* ASCII Art - Optional */}}
+{{ with site.Params.asciiArt }}
+<pre class="ascii-art">{{ . | safeHTML }}</pre>
+{{ end }}
+
+{{/* Mini Terminal Widget */}}
+{{ partial "mini-terminal.html" . }}
+
+{{/* Welcome message / About */}}
+<div class="output">
+  {{ with site.Params.welcome }}
+  <div class="output-line">{{ . | markdownify }}</div>
+  {{ else }}
+  <div class="output-line">Welcome to my terminal blog!</div>
+  {{ end }}
+</div>
+
+{{/* Info block */}}
+<div class="info-block">
+  {{ with site.Params.author }}
+  <div class="info-line">
+    <span class="info-label">Name:</span>
+    <span class="info-value">{{ . }}</span>
+  </div>
+  {{ end }}
+
+  {{ with site.Params.role }}
+  <div class="info-line">
+    <span class="info-label">Role:</span>
+    <span class="info-value">{{ . }}</span>
+  </div>
+  {{ end }}
+
+  {{ with site.Params.location }}
+  <div class="info-line">
+    <span class="info-label">Location:</span>
+    <span class="info-value">{{ . }}</span>
+  </div>
+  {{ end }}
+
+  {{ with site.Params.social.github }}
+  <div class="info-line">
+    <span class="info-label">GitHub:</span>
+    <span class="info-value"><a href="https://github.com/{{ . }}" target="_blank" rel="noopener">github.com/{{ . }}</a></span>
+  </div>
+  {{ end }}
+
+  {{ with site.Params.social.twitter }}
+  <div class="info-line">
+    <span class="info-label">Twitter:</span>
+    <span class="info-value"><a href="https://twitter.com/{{ . }}" target="_blank" rel="noopener">@{{ . }}</a></span>
+  </div>
+  {{ end }}
+
+  {{ with site.Params.social.linkedin }}
+  <div class="info-line">
+    <span class="info-label">LinkedIn:</span>
+    <span class="info-value"><a href="https://linkedin.com/in/{{ . }}" target="_blank" rel="noopener">{{ . }}</a></span>
+  </div>
+  {{ end }}
+
+  {{ with site.Params.email }}
+  <div class="info-line">
+    <span class="info-label">Email:</span>
+    <span class="info-value"><a href="mailto:{{ . }}">{{ . }}</a></span>
+  </div>
+  {{ end }}
+</div>
+
+{{/* Recent articles */}}
+{{ $articles := where site.RegularPages "Section" "articles" }}
+{{ if $articles }}
+<div class="prompt" style="margin-top: 32px;">
+  <span class="prompt-user">{{ site.Params.promptUser | default "visitor" }}</span>
+  <span class="prompt-separator">@</span>
+  <span class="prompt-path">{{ site.Params.promptHost | default "blog" }}</span>
+  <span class="prompt-symbol">$</span>
+  <span>ls -la ./articles | head -{{ site.Params.recentArticlesCount | default 5 }}</span>
+</div>
+
+<div class="articles-list">
+  {{ range first (site.Params.recentArticlesCount | default 5) $articles }}
+  <div class="article-item">
+    <span class="article-date">{{ .Date.Format "2006-01-02" }}</span>
+    <span class="article-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></span>
+    {{ with .Params.tags }}
+    <div class="article-tags">
+      {{ range first 2 . }}
+      <span class="tag">{{ . }}</span>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+  {{ end }}
+</div>
+
+<div class="output">
+  <a href="{{ "articles/" | relURL }}">View all articles →</a>
+</div>
+{{ end }}
+
+{{/* Custom content from _index.md */}}
+{{ with .Content }}
+<div class="output" style="margin-top: 24px;">
+  {{ . }}
+</div>
+{{ end }}
+{{ end }}
