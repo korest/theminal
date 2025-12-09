@@ -2,6 +2,8 @@
 
 A terminal-inspired Hugo theme for developer blogs.
 
+![Theminal example](.github/theminal_example.png)
+
 > This is the first minimal version - more features coming soon!
 
 ## Quick Start
