@@ -69,17 +69,17 @@ theme = 'theminal'
   # Number of recent articles to show on homepage
   recentArticlesCount = 5
 
-  # Social links (used in mini-terminal commands and info block)
-  [params.social]
-    github = "yourusername"
-    x = "yourusername"
-    linkedin = "yourusername"
-
   # Enable syntax highlighting for code blocks
   syntaxHighlighting = true
 
   # Show "Powered by Hugo & Theminal" in footer
   showPoweredBy = true
+
+  # Social links (used in mini-terminal commands and info block)
+  [params.social]
+    github = "yourusername"
+    x = "yourusername"
+    linkedin = "yourusername"
 
   # Custom footer text (overrides default)
   # footerText = "Custom footer text here"
