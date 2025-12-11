@@ -9,21 +9,23 @@ draft = false
   tagline = "Software Engineer"
 
 [[params.experience]]
-  title = "Senior Software Engineer"
+  position = "Senior Software Engineer"
   company = "Tech Company"
-  date = "2022 - Present"
+  startDate = "2022"
   description = "Building scalable systems and leading technical initiatives."
 
 [[params.experience]]
-  title = "Software Engineer"
+  position = "Software Engineer"
   company = "Startup Inc"
-  date = "2019 - 2022"
+  startDate = "2019"
+  endDate = "2022"
   description = "Full-stack development with Go, React, and PostgreSQL."
 
 [[params.education]]
   degree = "B.S. Computer Science"
-  school = "University"
-  date = "2015 - 2019"
+  institution = "University"
+  startDate = "2015"
+  endDate = "2019"
 
 [[params.skills]]
   category = "Languages"
