@@ -52,7 +52,7 @@
 <div class="output" style="margin-top: 12px;">
   <div class="skills-list">
     {{ range $name, $taxonomy := $tags }}
-    <a href="{{ "articles/tags/" | absURL }}{{ $name | urlize }}/" class="skill-tag">{{ $name }} ({{ len $taxonomy }})</a>
+    <a href="{{ "articles/tags/" | relURL }}{{ $name | urlize }}/" class="skill-tag">{{ $name }} ({{ len $taxonomy }})</a>
     {{ end }}
   </div>
 </div>
