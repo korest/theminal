@@ -7,20 +7,28 @@
 
   {{/* Articles Tab - also active for tags */}}
   {{ $isArticlesActive := or (eq .Section "articles") (eq .Section "tags") }}
-  <a href="{{ "articles/" | absURL }}" class="terminal-tab{{ if $isArticlesActive }} active{{ end }}" aria-current="{{ if $isArticlesActive }}page{{ end }}">
+  <a href="{{ "articles/" | relURL }}" class="terminal-tab{{ if $isArticlesActive }} active{{ end }}" aria-current="{{ if $isArticlesActive }}page{{ end }}">
     <span class="terminal-tab-icon">></span>
     <span>articles</span>
   </a>
 
+  {{/* Projects Tab - if projects configured */}}
+  {{ if site.Params.projects }}
+  <a href="{{ "projects/" | relURL }}" class="terminal-tab{{ if eq .Section "projects" }} active{{ end }}" aria-current="{{ if eq .Section "projects" }}page{{ end }}">
+    <span class="terminal-tab-icon">*</span>
+    <span>projects</span>
+  </a>
+  {{ end }}
+
   {{/* Resume Tab */}}
-  <a href="{{ "resume/" | absURL }}" class="terminal-tab{{ if eq .Title "Resume" }} active{{ end }}" aria-current="{{ if eq .Title "Resume" }}page{{ end }}">
+  <a href="{{ "resume/" | relURL }}" class="terminal-tab{{ if eq .Title "Resume" }} active{{ end }}" aria-current="{{ if eq .Title "Resume" }}page{{ end }}">
     <span class="terminal-tab-icon">#</span>
     <span>resume</span>
   </a>
 
   {{/* Custom tabs from config */}}
   {{ range site.Params.tabs }}
-  <a href="{{ .url | absURL }}" class="terminal-tab{{ if eq $.Title .name }} active{{ end }}">
+  <a href="{{ .url | relURL }}" class="terminal-tab{{ if eq $.Title .name }} active{{ end }}">
     <span class="terminal-tab-icon">{{ .icon | default ">" }}</span>
     <span>{{ .name }}</span>
   </a>

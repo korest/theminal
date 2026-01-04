@@ -112,6 +112,25 @@ theme = 'theminal'
   #   description = "Visit my other blog"
   #   external = true
 
+  # ===========================================
+  # GITHUB PROJECTS SHOWCASE
+  # ===========================================
+  # Projects displayed via /projects command and /projects page
+  # Stats are fetched from GitHub API and cached for 1 hour
+  #
+  # Example projects (uncomment and customize):
+  # [[params.projects]]
+  #   repo = "owner/repo-name"        # Required: GitHub repo in "owner/name" format
+  #   name = "Display Name"           # Optional: Override display name
+  #   description = "Custom desc"     # Optional: Override description
+  #   language = "Go"                 # Optional: Primary language (for fallback)
+  #   featured = true                 # Optional: Show at top with star indicator
+
+  # Your GitHub projects
+  [[params.projects]]
+    repo = "korest/theminal"
+    featured = true
+
 # ===========================================
 # MARKUP CONFIGURATION
 # ===========================================

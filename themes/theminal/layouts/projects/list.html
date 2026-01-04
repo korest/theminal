@@ -1,0 +1,193 @@
+{{ define "main" }}
+{{/* Command prompt */}}
+<div class="prompt">
+  <span class="prompt-user">{{ site.Params.promptUser | default "visitor" }}</span>
+  <span class="prompt-separator">@</span>
+  <span class="prompt-path">{{ site.Params.promptHost | default "blog" }}</span>
+  <span class="prompt-symbol">$</span>
+  <span>ls -la ./projects</span>
+</div>
+
+<div class="output">
+  <div class="output-line">GitHub repositories and open source projects</div>
+</div>
+
+{{/* Projects list - rendered by JavaScript for live stats */}}
+<div class="projects-page" id="projects-page">
+  {{ if site.Params.projects }}
+  <div class="projects-loading">Loading project stats...</div>
+  {{ else }}
+  <div class="projects-empty">
+    <span class="projects-icon">?</span>
+    No projects configured. Add projects to hugo.toml using [[params.projects]].
+  </div>
+  {{ end }}
+</div>
+
+{{/* Include projects data for JS */}}
+{{ if site.Params.projects }}
+{{ $projects := slice }}
+{{ range site.Params.projects }}
+  {{ $project := dict
+    "repo" .repo
+    "name" (default (index (split .repo "/") 1) .name)
+    "description" (default "" .description)
+    "language" (default "" .language)
+    "featured" (default false .featured)
+  }}
+  {{ $projects = $projects | append $project }}
+{{ end }}
+<script id="projects-page-data" type="application/json">{{ $projects | jsonify | safeJS }}</script>
+
+<script>
+(function() {
+  const CACHE_KEY = 'theminal-github-cache';
+  const CACHE_TIME_KEY = 'theminal-github-cache-time';
+  const TOKEN_KEY = 'theminal-github-token';
+  const CACHE_DURATION = 60 * 60 * 1000;
+
+  function getCachedStats() {
+    try {
+      const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+      if (!cacheTime) return {};
+      const age = Date.now() - parseInt(cacheTime, 10);
+      if (age > CACHE_DURATION) return {};
+      const cache = localStorage.getItem(CACHE_KEY);
+      return cache ? JSON.parse(cache) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function setCachedStats(stats) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(stats));
+      localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+    } catch (e) {}
+  }
+
+  function getGitHubToken() {
+    try { return localStorage.getItem(TOKEN_KEY); } catch (e) { return null; }
+  }
+
+  async function fetchGitHubStats(repos) {
+    const token = getGitHubToken();
+    const headers = token ? { 'Authorization': `token ${token}` } : {};
+    const stats = {};
+    for (const repo of repos) {
+      try {
+        const response = await fetch(`https://api.github.com/repos/${repo}`, { headers });
+        if (response.ok) {
+          const data = await response.json();
+          stats[repo] = {
+            stars: data.stargazers_count,
+            forks: data.forks_count,
+            description: data.description,
+            language: data.language,
+            url: data.html_url
+          };
+        }
+      } catch (e) {}
+    }
+    return stats;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function renderProjectItem(project) {
+    return `
+      <a href="${project.url}" class="project-item" target="_blank" rel="noopener noreferrer">
+        <div class="project-header">
+          <span class="project-name">${escapeHtml(project.name)}</span>
+          ${project.featured ? '<span class="project-featured">*</span>' : ''}
+        </div>
+        ${project.description ? `<div class="project-desc">${escapeHtml(project.description)}</div>` : ''}
+        <div class="project-meta">
+          ${project.language ? `<span class="project-lang">${escapeHtml(project.language)}</span>` : ''}
+          <span class="project-stars">★ ${project.stars}</span>
+          <span class="project-forks">⑂ ${project.forks}</span>
+        </div>
+      </a>
+    `;
+  }
+
+  function renderProjects(projects) {
+    const container = document.getElementById('projects-page');
+    if (!container) return;
+    if (projects.length === 0) {
+      container.innerHTML = '<div class="projects-empty"><span class="projects-icon">?</span>No projects configured</div>';
+    } else {
+      container.innerHTML = projects.map(p => renderProjectItem(p)).join('');
+    }
+  }
+
+  async function init() {
+    const dataEl = document.getElementById('projects-page-data');
+    if (!dataEl) return;
+
+    let projects;
+    try {
+      projects = JSON.parse(dataEl.textContent);
+      projects.sort((a, b) => {
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return a.name.localeCompare(b.name);
+      });
+    } catch (e) {
+      console.error('Failed to parse projects data:', e);
+      return;
+    }
+
+    // Check cache first
+    let stats = getCachedStats();
+
+    // Check if any repo is missing from cache
+    const repos = projects.map(p => p.repo);
+    const needsFetch = repos.some(repo => !stats[repo]);
+
+    // Render with cached data first (if available)
+    const merged = projects.map(p => {
+      const s = stats[p.repo] || {};
+      return {
+        ...p,
+        stars: s.stars ?? 0,
+        forks: s.forks ?? 0,
+        description: s.description || p.description || '',
+        language: s.language || p.language || '',
+        url: s.url || `https://github.com/${p.repo}`
+      };
+    });
+    renderProjects(merged);
+
+    // Fetch fresh stats if cache is stale or repos are missing
+    if (needsFetch) {
+      stats = await fetchGitHubStats(repos);
+      setCachedStats(stats);
+      const freshMerged = projects.map(p => {
+        const s = stats[p.repo] || {};
+        return {
+          ...p,
+          stars: s.stars ?? 0,
+          forks: s.forks ?? 0,
+          description: s.description || p.description || '',
+          language: s.language || p.language || '',
+          url: s.url || `https://github.com/${p.repo}`
+        };
+      });
+      renderProjects(freshMerged);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+{{ end }}
+{{ end }}

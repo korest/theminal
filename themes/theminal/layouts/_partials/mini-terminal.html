@@ -10,7 +10,7 @@
     >
   </div>
   <div class="mini-terminal-suggestions" id="terminal-suggestions">
-    <div class="suggestion-item" data-cmd="/articles" data-url="{{ "articles/" | absURL }}">
+    <div class="suggestion-item" data-cmd="/articles" data-url="{{ "articles/" | relURL }}">
       <span class="suggestion-cmd">/articles</span>
       <span class="suggestion-desc">Browse all articles</span>
     </div>
@@ -36,7 +36,7 @@
       <span class="suggestion-desc">LinkedIn profile</span>
     </div>
     {{ end }}
-    <div class="suggestion-item" data-cmd="/resume" data-url="{{ "resume/" | absURL }}">
+    <div class="suggestion-item" data-cmd="/resume" data-url="{{ "resume/" | relURL }}">
       <span class="suggestion-cmd">/resume</span>
       <span class="suggestion-desc">View resume</span>
     </div>
@@ -48,6 +48,12 @@
       <span class="suggestion-cmd">/theme</span>
       <span class="suggestion-desc">Toggle dark/light theme</span>
     </div>
+    {{ if site.Params.projects }}
+    <div class="suggestion-item" data-cmd="/projects" data-url="{{ "projects/" | relURL }}">
+      <span class="suggestion-cmd">/projects</span>
+      <span class="suggestion-desc">View GitHub projects</span>
+    </div>
+    {{ end }}
     {{ with site.Params.social.x }}
     <div class="suggestion-item" data-cmd="/x" data-url="https://x.com/{{ . }}" data-external="true">
       <span class="suggestion-cmd">/x</span>

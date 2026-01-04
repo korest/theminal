@@ -569,6 +569,115 @@ a:hover {
 }
 
 /* ============================================
+   PROJECTS PAGE
+   ============================================ */
+.project-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-window);
+  border: 1px solid var(--border-subtle);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.project-item:hover {
+  border-color: var(--accent-purple);
+  background: rgba(163, 113, 247, 0.08);
+  text-decoration: none;
+}
+
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.project-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.project-item:hover .project-name {
+  color: var(--accent-purple);
+}
+
+.project-featured {
+  color: var(--accent-yellow);
+  font-size: 12px;
+}
+
+.project-desc {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.project-lang {
+  color: var(--accent-cyan);
+  font-weight: 500;
+}
+
+.project-stars,
+.project-forks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.project-stars {
+  color: var(--accent-yellow);
+}
+
+.project-forks {
+  color: var(--text-muted);
+}
+
+.projects-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+}
+
+.projects-empty .projects-icon {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--accent-yellow);
+}
+
+/* Projects page styles */
+.projects-page {
+  margin: 20px 0;
+}
+
+.projects-page .project-item {
+  margin-bottom: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .project-meta {
+    gap: 8px;
+  }
+
+  .projects-list {
+    max-height: 280px;
+  }
+}
+
+/* ============================================
    ARTICLES LIST
    ============================================ */
 .articles-list {
@@ -956,11 +1065,18 @@ a:hover {
 .chroma .bp   /* NameBuiltinPseudo */
 { color: var(--accent-cyan); }
 
+.chroma .n    /* Name (generic) */
+{ color: var(--text-primary); }
+
 .chroma .nv,  /* NameVariable */
 .chroma .vc,  /* NameVariableClass */
 .chroma .vg,  /* NameVariableGlobal */
-.chroma .vi   /* NameVariableInstance */
+.chroma .vi,  /* NameVariableInstance */
+.chroma .vm   /* NameVariableMagic (__name__, __init__) */
 { color: var(--text-primary); }
+
+.chroma .py   /* NameProperty */
+{ color: var(--accent-cyan); }
 
 /* Strings */
 .chroma .s,   /* LiteralString */
@@ -995,6 +1111,14 @@ a:hover {
 .chroma .o,   /* Operator */
 .chroma .ow   /* OperatorWord */
 { color: var(--accent-pink); }
+
+/* Punctuation */
+.chroma .p    /* Punctuation (brackets, parens, commas) */
+{ color: var(--text-primary); }
+
+/* Whitespace */
+.chroma .w    /* Whitespace */
+{ color: transparent; }
 
 /* Comments */
 .chroma .c,   /* Comment */
