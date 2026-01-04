@@ -101,6 +101,22 @@
 </div>
 {{ end }}
 
+{{/* Certifications */}}
+{{ with .Params.certifications }}
+<div class="resume-section">
+  <h2>Certifications</h2>
+  {{ range . }}
+  <div class="resume-item">
+    <div class="resume-item-header">
+      <span class="resume-item-title">{{ .name }}</span>
+      <span class="resume-item-date">{{ .date }}</span>
+    </div>
+    <div class="resume-item-subtitle">{{ .issuer }}</div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
+
 {{/* Skills */}}
 {{ with .Params.skills }}
 <div class="resume-section">
@@ -146,22 +162,6 @@
       {{ end }}
     </div>
     {{ end }}
-  </div>
-  {{ end }}
-</div>
-{{ end }}
-
-{{/* Certifications */}}
-{{ with .Params.certifications }}
-<div class="resume-section">
-  <h2>Certifications</h2>
-  {{ range . }}
-  <div class="resume-item">
-    <div class="resume-item-header">
-      <span class="resume-item-title">{{ .name }}</span>
-      <span class="resume-item-date">{{ .date }}</span>
-    </div>
-    <div class="resume-item-subtitle">{{ .issuer }}</div>
   </div>
   {{ end }}
 </div>

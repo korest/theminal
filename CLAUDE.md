@@ -8,6 +8,7 @@ A terminal-inspired Hugo theme for developer blogs. Mimics a terminal window wit
 /
 ├── content/
 │   ├── articles/          # Blog posts
+│   ├── projects/          # Projects page (_index.md)
 │   └── resume/            # Resume page (_index.md)
 ├── themes/theminal/
 │   ├── assets/
@@ -22,6 +23,7 @@ A terminal-inspired Hugo theme for developer blogs. Mimics a terminal window wit
 │   │   │   ├── head.html           # Meta, OG, RSS
 │   │   │   └── scripts.html        # JS loading
 │   │   ├── articles/      # Article templates
+│   │   ├── projects/      # Projects template (GitHub showcase)
 │   │   ├── resume/        # Resume template
 │   │   ├── baseof.html    # Base wrapper (terminal window)
 │   │   └── home.html      # Homepage
@@ -37,13 +39,16 @@ A terminal-inspired Hugo theme for developer blogs. Mimics a terminal window wit
 - **Client-side Search**: JSON index, searches title/content/tags/description
 - **Theme Toggle**: Dark/light themes, `t` key shortcut, localStorage persistence
 - **Keyboard Navigation**: `/` to focus terminal, arrows for suggestions, Tab to complete
+- **GitHub Projects Showcase**: Display repos with live stats (stars, forks, description) from GitHub API, cached for 1 hour
 
 ## Built-in Commands
 
-- `/home`, `/articles`, `/resume` - Navigation
+- `/home`, `/articles`, `/resume`, `/projects` - Navigation
 - `/search <query>` - Search articles
 - `/theme` - Toggle dark/light
 - `/github`, `/x`, `/linkedin`, `/email` - Social links (if configured)
+
+Note: `/projects` tab and command only appear if projects are configured in hugo.toml.
 
 ## Configuration (hugo.toml)
 
@@ -71,11 +76,16 @@ Key params:
     description = "Description"
     external = true
 
-  # Custom tabs
+  # Custom tabs (in addition to built-in home, articles, projects, resume)
   [[params.tabs]]
-    name = "projects"
-    url = "/projects/"
-    icon = "*"
+    name = "talks"
+    url = "/talks/"
+    icon = ">"
+
+  # GitHub Projects (shows /projects tab and command)
+  [[params.projects]]
+    repo = "username/repo-name"   # Required: GitHub repo
+    featured = true               # Optional: show at top with * indicator
 ```
 
 ## Development
@@ -118,6 +128,7 @@ GitHub Actions workflow deploys to GitHub Pages on push to `main`. Hugo version:
 
 ## Gotchas
 
-- Paths must respect `baseURL` for subdirectory deployments (use `absURL` in templates, `document.baseURI` in JS)
+- Paths must respect `baseURL` for subdirectory deployments (use `relURL` in templates, `document.baseURI` in JS)
 - Search loads `/index.json` - ensure JSON output is enabled in hugo.toml
 - Theme preference stored in `localStorage` key `theminal-theme`
+- GitHub project stats cached in `localStorage` keys `theminal-github-cache` and `theminal-github-cache-time` (1 hour TTL)

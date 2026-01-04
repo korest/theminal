@@ -34,6 +34,16 @@ draft = false
 [[params.skills]]
   category = "Tools"
   items = ["Docker", "Kubernetes", "Git", "Linux"]
+
+[[params.certifications]]
+  name = "AWS Solutions Architect - Associate"
+  date = "2023"
+  issuer = "Amazon Web Services"
+
+[[params.certifications]]
+  name = "Certified Kubernetes Administrator"
+  date = "2022"
+  issuer = "CNCF"
 +++
 
 This is a sample resume page. Edit `content/resume/_index.md` to add your own experience, education, and skills.
