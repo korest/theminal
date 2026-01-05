@@ -72,6 +72,9 @@ theme = 'theminal'
   # Enable syntax highlighting for code blocks
   syntaxHighlighting = true
 
+  # Enable snake game (/snake command)
+  enableSnakeGame = true
+
   # Show "Powered by Hugo & Theminal" in footer
   showPoweredBy = true
 

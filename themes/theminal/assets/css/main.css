@@ -569,6 +569,122 @@ a:hover {
 }
 
 /* ============================================
+   SNAKE GAME
+   ============================================ */
+.snake-game {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.snake-game.visible {
+  display: block;
+}
+
+.snake-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border-color);
+  font-size: 12px;
+}
+
+.snake-title {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+.snake-score {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.snake-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.snake-close:hover {
+  color: var(--accent-red);
+  background: rgba(248, 81, 73, 0.1);
+}
+
+.snake-board {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.snake-grid {
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-muted);
+  margin: 0;
+  user-select: none;
+}
+
+.snake-head {
+  color: var(--accent-green);
+  font-weight: bold;
+}
+
+.snake-body {
+  color: var(--accent-cyan);
+}
+
+.snake-food {
+  color: var(--accent-yellow);
+  animation: blink 0.5s infinite;
+}
+
+.snake-controls {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.snake-gameover {
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+.snake-paused {
+  color: var(--accent-yellow);
+  font-weight: 600;
+}
+
+.snake-hint {
+  color: var(--text-muted);
+}
+
+/* Snake game responsive */
+@media (max-width: 640px) {
+  .snake-grid {
+    font-size: 10px;
+  }
+
+  .snake-board {
+    padding: 8px;
+  }
+}
+
+/* ============================================
    PROJECTS PAGE
    ============================================ */
 .project-item {

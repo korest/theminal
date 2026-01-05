@@ -98,6 +98,253 @@
   }
 
   // ============================================
+  // SNAKE GAME
+  // ============================================
+  const snakeGameContainer = document.getElementById('snake-game');
+  let snakeGame = null;
+
+  function createSnakeGame() {
+    if (!snakeGameContainer) return null;
+
+    const GRID_WIDTH = 20;
+    const GRID_HEIGHT = 15;
+    const TICK_RATE = 150;
+
+    let snake = [];
+    let direction = { x: 1, y: 0 };
+    let nextDirection = { x: 1, y: 0 };
+    let food = { x: 0, y: 0 };
+    let score = 0;
+    let highScore = parseInt(localStorage.getItem('theminal-snake-highscore') || '0');
+    let gameInterval = null;
+    let isGameOver = false;
+    let isPaused = false;
+
+    function init() {
+      snake = [
+        { x: 5, y: 7 },
+        { x: 4, y: 7 },
+        { x: 3, y: 7 }
+      ];
+      direction = { x: 1, y: 0 };
+      nextDirection = { x: 1, y: 0 };
+      score = 0;
+      isGameOver = false;
+      isPaused = false;
+      spawnFood();
+      render();
+    }
+
+    function spawnFood() {
+      do {
+        food = {
+          x: Math.floor(Math.random() * GRID_WIDTH),
+          y: Math.floor(Math.random() * GRID_HEIGHT)
+        };
+      } while (snake.some(seg => seg.x === food.x && seg.y === food.y));
+    }
+
+    function update() {
+      if (isGameOver || isPaused) return;
+
+      direction = nextDirection;
+      const head = {
+        x: snake[0].x + direction.x,
+        y: snake[0].y + direction.y
+      };
+
+      // Wall collision
+      if (head.x < 0 || head.x >= GRID_WIDTH ||
+          head.y < 0 || head.y >= GRID_HEIGHT) {
+        gameOver();
+        return;
+      }
+
+      // Self collision
+      if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        gameOver();
+        return;
+      }
+
+      snake.unshift(head);
+
+      // Food collision
+      if (head.x === food.x && head.y === food.y) {
+        score += 10;
+        spawnFood();
+      } else {
+        snake.pop();
+      }
+
+      render();
+    }
+
+    function gameOver() {
+      isGameOver = true;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('theminal-snake-highscore', highScore.toString());
+      }
+      render();
+    }
+
+    function render() {
+      let output = '';
+
+      // Header
+      output += '<div class="snake-header">';
+      output += '<span class="snake-title">[SNAKE]</span>';
+      output += '<span class="snake-score">Score: ' + score + ' | High: ' + highScore + '</span>';
+      output += '<button class="snake-close" onclick="window.closeSnakeGame()">[x] close</button>';
+      output += '</div>';
+
+      // Game board
+      output += '<div class="snake-board">';
+      output += '<pre class="snake-grid">';
+
+      // Top border
+      output += '+' + '-'.repeat(GRID_WIDTH * 2) + '+\n';
+
+      for (let y = 0; y < GRID_HEIGHT; y++) {
+        output += '|';
+        for (let x = 0; x < GRID_WIDTH; x++) {
+          const isHead = snake[0].x === x && snake[0].y === y;
+          const isBody = snake.slice(1).some(seg => seg.x === x && seg.y === y);
+          const isFood = food.x === x && food.y === y;
+
+          if (isHead) {
+            output += '<span class="snake-head">@@</span>';
+          } else if (isBody) {
+            output += '<span class="snake-body">[]</span>';
+          } else if (isFood) {
+            output += '<span class="snake-food">**</span>';
+          } else {
+            output += '  ';
+          }
+        }
+        output += '|\n';
+      }
+
+      // Bottom border
+      output += '+' + '-'.repeat(GRID_WIDTH * 2) + '+';
+      output += '</pre>';
+      output += '</div>';
+
+      // Controls/status
+      output += '<div class="snake-controls">';
+      if (isGameOver) {
+        output += '<span class="snake-gameover">GAME OVER!</span> ';
+        output += '<span class="snake-hint">Press [R] to restart or [ESC] to exit</span>';
+      } else if (isPaused) {
+        output += '<span class="snake-paused">PAUSED</span> ';
+        output += '<span class="snake-hint">Press [P] to resume</span>';
+      } else {
+        output += '<span class="snake-hint">Controls: Arrow keys or WASD | [P] Pause | [ESC] Exit</span>';
+      }
+      output += '</div>';
+
+      snakeGameContainer.innerHTML = output;
+    }
+
+    function handleKey(e) {
+      if (!snakeGameContainer.classList.contains('visible')) return;
+
+      const key = e.key.toLowerCase();
+
+      // Prevent default for game keys
+      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'p', 'r', 'escape'].includes(key)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      if (isGameOver) {
+        if (key === 'r') {
+          init();
+          startGame();
+        } else if (key === 'escape') {
+          closeGame();
+        }
+        return;
+      }
+
+      if (key === 'escape') {
+        closeGame();
+        return;
+      }
+
+      if (key === 'p') {
+        isPaused = !isPaused;
+        render();
+        return;
+      }
+
+      if (isPaused) return;
+
+      // Direction changes (prevent reversing)
+      switch (key) {
+        case 'arrowup':
+        case 'w':
+          if (direction.y !== 1) nextDirection = { x: 0, y: -1 };
+          break;
+        case 'arrowdown':
+        case 's':
+          if (direction.y !== -1) nextDirection = { x: 0, y: 1 };
+          break;
+        case 'arrowleft':
+        case 'a':
+          if (direction.x !== 1) nextDirection = { x: -1, y: 0 };
+          break;
+        case 'arrowright':
+        case 'd':
+          if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
+          break;
+      }
+    }
+
+    function startGame() {
+      if (gameInterval) clearInterval(gameInterval);
+      gameInterval = setInterval(update, TICK_RATE);
+    }
+
+    function closeGame() {
+      if (gameInterval) clearInterval(gameInterval);
+      gameInterval = null;
+      snakeGameContainer.classList.remove('visible');
+      snakeGameContainer.innerHTML = '';
+    }
+
+    return {
+      start: function() {
+        init();
+        snakeGameContainer.classList.add('visible');
+        startGame();
+      },
+      close: closeGame,
+      handleKey: handleKey,
+      isVisible: function() {
+        return snakeGameContainer.classList.contains('visible');
+      }
+    };
+  }
+
+  // Initialize snake game if container exists
+  if (snakeGameContainer) {
+    snakeGame = createSnakeGame();
+
+    // Global key handler for snake game
+    document.addEventListener('keydown', function(e) {
+      if (snakeGame && snakeGame.isVisible()) {
+        snakeGame.handleKey(e);
+      }
+    }, true);
+  }
+
+  // Expose close function globally for the close button
+  window.closeSnakeGame = function() {
+    if (snakeGame) snakeGame.close();
+  };
+
+  // ============================================
   // THEME TOGGLE
   // ============================================
   const themeToggle = document.getElementById('theme-toggle');
@@ -199,6 +446,16 @@
     const cmd = item.getAttribute('data-cmd');
     if (cmd === '/theme') {
       toggleTheme();
+      hideSuggestions();
+      input.value = '';
+      return;
+    }
+
+    // Special command: /snake - start snake game
+    if (cmd === '/snake') {
+      if (snakeGame) {
+        snakeGame.start();
+      }
       hideSuggestions();
       input.value = '';
       return;

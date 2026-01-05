@@ -54,6 +54,12 @@
       <span class="suggestion-desc">View GitHub projects</span>
     </div>
     {{ end }}
+    {{ if site.Params.enableSnakeGame }}
+    <div class="suggestion-item" data-cmd="/snake" data-url="#" data-snake="true">
+      <span class="suggestion-cmd">/snake</span>
+      <span class="suggestion-desc">Play snake game</span>
+    </div>
+    {{ end }}
     {{ with site.Params.social.x }}
     <div class="suggestion-item" data-cmd="/x" data-url="https://x.com/{{ . }}" data-external="true">
       <span class="suggestion-cmd">/x</span>
@@ -70,4 +76,8 @@
   </div>
   {{/* Search results container */}}
   <div class="search-results" id="search-results"></div>
+  {{/* Snake game container */}}
+  {{ if site.Params.enableSnakeGame }}
+  <div class="snake-game" id="snake-game"></div>
+  {{ end }}
 </div>
