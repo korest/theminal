@@ -243,6 +243,25 @@
       }
       output += '</div>';
 
+      // Mobile controls (hidden on desktop via CSS)
+      output += '<div class="snake-mobile-controls">';
+      output += '<button class="snake-btn" onclick="window.snakeMove(\'up\')">&#9650;</button>';
+      output += '<div class="snake-btn-row">';
+      output += '<button class="snake-btn" onclick="window.snakeMove(\'left\')">&#9664;</button>';
+      output += '<button class="snake-btn" onclick="window.snakeMove(\'right\')">&#9654;</button>';
+      output += '</div>';
+      output += '<button class="snake-btn" onclick="window.snakeMove(\'down\')">&#9660;</button>';
+      output += '<div class="snake-btn-actions">';
+      if (isGameOver) {
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'restart\')">[R] Restart</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">[X] Close</button>';
+      } else {
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'pause\')">[P] ' + (isPaused ? 'Resume' : 'Pause') + '</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">[X] Close</button>';
+      }
+      output += '</div>';
+      output += '</div>';
+
       snakeGameContainer.innerHTML = output;
     }
 
@@ -313,6 +332,47 @@
       snakeGameContainer.innerHTML = '';
     }
 
+    // Mobile control handlers
+    function setDirection(dir) {
+      if (!snakeGameContainer.classList.contains('visible')) return;
+      if (isGameOver || isPaused) return;
+
+      switch (dir) {
+        case 'up':
+          if (direction.y !== 1) nextDirection = { x: 0, y: -1 };
+          break;
+        case 'down':
+          if (direction.y !== -1) nextDirection = { x: 0, y: 1 };
+          break;
+        case 'left':
+          if (direction.x !== 1) nextDirection = { x: -1, y: 0 };
+          break;
+        case 'right':
+          if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
+          break;
+      }
+    }
+
+    function handleAction(action) {
+      if (!snakeGameContainer.classList.contains('visible')) return;
+
+      switch (action) {
+        case 'pause':
+          if (!isGameOver) {
+            isPaused = !isPaused;
+            render();
+          }
+          break;
+        case 'restart':
+          init();
+          startGame();
+          break;
+        case 'close':
+          closeGame();
+          break;
+      }
+    }
+
     return {
       start: function() {
         init();
@@ -321,6 +381,8 @@
       },
       close: closeGame,
       handleKey: handleKey,
+      setDirection: setDirection,
+      handleAction: handleAction,
       isVisible: function() {
         return snakeGameContainer.classList.contains('visible');
       }
@@ -339,9 +401,17 @@
     }, true);
   }
 
-  // Expose close function globally for the close button
+  // Expose functions globally for buttons
   window.closeSnakeGame = function() {
     if (snakeGame) snakeGame.close();
+  };
+
+  window.snakeMove = function(dir) {
+    if (snakeGame) snakeGame.setDirection(dir);
+  };
+
+  window.snakeAction = function(action) {
+    if (snakeGame) snakeGame.handleAction(action);
   };
 
   // ============================================
