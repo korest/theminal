@@ -234,35 +234,89 @@
       output += '<div class="snake-controls">';
       if (isGameOver) {
         output += '<span class="snake-gameover">GAME OVER!</span> ';
-        output += '<span class="snake-hint">Press [R] to restart or [ESC] to exit</span>';
+        output += '<span class="snake-hint snake-hint-desktop">Press [R] to restart or [ESC] to exit</span>';
       } else if (isPaused) {
         output += '<span class="snake-paused">PAUSED</span> ';
-        output += '<span class="snake-hint">Press [P] to resume</span>';
+        output += '<span class="snake-hint snake-hint-desktop">Press [P] to resume</span>';
       } else {
-        output += '<span class="snake-hint">Controls: Arrow keys or WASD | [P] Pause | [ESC] Exit</span>';
+        output += '<span class="snake-hint snake-hint-desktop">Controls: Arrow keys or WASD | [P] Pause | [ESC] Exit</span>';
+        output += '<span class="snake-hint snake-hint-mobile">Swipe to move</span>';
       }
       output += '</div>';
 
-      // Mobile controls (hidden on desktop via CSS)
+      // Mobile action buttons only (no directional buttons - using swipe instead)
       output += '<div class="snake-mobile-controls">';
-      output += '<button class="snake-btn" onclick="window.snakeMove(\'up\')">&#9650;</button>';
-      output += '<div class="snake-btn-row">';
-      output += '<button class="snake-btn" onclick="window.snakeMove(\'left\')">&#9664;</button>';
-      output += '<button class="snake-btn" onclick="window.snakeMove(\'right\')">&#9654;</button>';
-      output += '</div>';
-      output += '<button class="snake-btn" onclick="window.snakeMove(\'down\')">&#9660;</button>';
       output += '<div class="snake-btn-actions">';
       if (isGameOver) {
-        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'restart\')">[R] Restart</button>';
-        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">[X] Close</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'restart\')">Restart</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">Close</button>';
       } else {
-        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'pause\')">[P] ' + (isPaused ? 'Resume' : 'Pause') + '</button>';
-        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">[X] Close</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'pause\')">' + (isPaused ? 'Resume' : 'Pause') + '</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">Close</button>';
       }
       output += '</div>';
       output += '</div>';
 
       snakeGameContainer.innerHTML = output;
+    }
+
+    // Swipe gesture detection for mobile
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const MIN_SWIPE_DISTANCE = 30;
+
+    function handleTouchStart(e) {
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }
+
+    function handleTouchMove(e) {
+      // Prevent scrolling while playing
+      if (!isGameOver) {
+        e.preventDefault();
+      }
+    }
+
+    function handleTouchEnd(e) {
+      if (isGameOver || isPaused) return;
+
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+
+      // Determine swipe direction based on which axis had more movement
+      if (Math.abs(deltaX) < MIN_SWIPE_DISTANCE && Math.abs(deltaY) < MIN_SWIPE_DISTANCE) {
+        return; // Too short, not a swipe
+      }
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 0 && direction.x !== -1) {
+          nextDirection = { x: 1, y: 0 }; // Right
+        } else if (deltaX < 0 && direction.x !== 1) {
+          nextDirection = { x: -1, y: 0 }; // Left
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY > 0 && direction.y !== -1) {
+          nextDirection = { x: 0, y: 1 }; // Down
+        } else if (deltaY < 0 && direction.y !== 1) {
+          nextDirection = { x: 0, y: -1 }; // Up
+        }
+      }
+    }
+
+    function setupTouchControls() {
+      snakeGameContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+      snakeGameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+      snakeGameContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+
+    function removeTouchControls() {
+      snakeGameContainer.removeEventListener('touchstart', handleTouchStart);
+      snakeGameContainer.removeEventListener('touchmove', handleTouchMove);
+      snakeGameContainer.removeEventListener('touchend', handleTouchEnd);
     }
 
     function handleKey(e) {
@@ -328,6 +382,7 @@
     function closeGame() {
       if (gameInterval) clearInterval(gameInterval);
       gameInterval = null;
+      removeTouchControls();
       snakeGameContainer.classList.remove('visible');
       snakeGameContainer.innerHTML = '';
     }
@@ -377,6 +432,7 @@
       start: function() {
         init();
         snakeGameContainer.classList.add('visible');
+        setupTouchControls();
         startGame();
       },
       close: closeGame,
