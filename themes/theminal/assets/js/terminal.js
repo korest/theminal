@@ -263,47 +263,78 @@
     // Swipe gesture detection for mobile
     let touchStartX = 0;
     let touchStartY = 0;
-    const MIN_SWIPE_DISTANCE = 30;
+    let swipeHandled = false;
+    const MIN_SWIPE_DISTANCE = 20;
 
     function handleTouchStart(e) {
       const touch = e.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
+      swipeHandled = false;
     }
 
-    function handleTouchMove(e) {
-      // Prevent scrolling while playing
-      if (!isGameOver) {
-        e.preventDefault();
-      }
-    }
+    function processSwipe(currentX, currentY) {
+      if (isGameOver || isPaused || swipeHandled) return false;
 
-    function handleTouchEnd(e) {
-      if (isGameOver || isPaused) return;
+      const deltaX = currentX - touchStartX;
+      const deltaY = currentY - touchStartY;
 
-      const touch = e.changedTouches[0];
-      const deltaX = touch.clientX - touchStartX;
-      const deltaY = touch.clientY - touchStartY;
-
-      // Determine swipe direction based on which axis had more movement
+      // Check if swipe distance is sufficient
       if (Math.abs(deltaX) < MIN_SWIPE_DISTANCE && Math.abs(deltaY) < MIN_SWIPE_DISTANCE) {
-        return; // Too short, not a swipe
+        return false;
       }
 
+      let changed = false;
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
         if (deltaX > 0 && direction.x !== -1) {
           nextDirection = { x: 1, y: 0 }; // Right
+          changed = true;
         } else if (deltaX < 0 && direction.x !== 1) {
           nextDirection = { x: -1, y: 0 }; // Left
+          changed = true;
         }
       } else {
         // Vertical swipe
         if (deltaY > 0 && direction.y !== -1) {
           nextDirection = { x: 0, y: 1 }; // Down
+          changed = true;
         } else if (deltaY < 0 && direction.y !== 1) {
           nextDirection = { x: 0, y: -1 }; // Up
+          changed = true;
         }
+      }
+
+      if (changed) {
+        swipeHandled = true;
+        // Reset start position for potential chained swipes
+        touchStartX = currentX;
+        touchStartY = currentY;
+      }
+
+      return changed;
+    }
+
+    function handleTouchMove(e) {
+      // Always prevent scrolling while game is visible and active
+      if (!isGameOver) {
+        e.preventDefault();
+      }
+
+      // Process swipe during move for instant response
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        if (processSwipe(touch.clientX, touch.clientY)) {
+          swipeHandled = false; // Allow continuous swipes during drag
+        }
+      }
+    }
+
+    function handleTouchEnd(e) {
+      // Also check on touchend in case touchmove didn't fire enough
+      if (e.changedTouches.length > 0) {
+        const touch = e.changedTouches[0];
+        processSwipe(touch.clientX, touch.clientY);
       }
     }
 
