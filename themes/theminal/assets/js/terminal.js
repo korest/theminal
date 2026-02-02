@@ -108,17 +108,67 @@
 
     const GRID_WIDTH = 20;
     const GRID_HEIGHT = 15;
-    const TICK_RATE = 150;
 
+    // Level definitions
+    const LEVELS = {
+      easy: {
+        name: 'Easy',
+        tickRate: 200,
+        obstacles: [],
+        description: 'Slow speed, no obstacles'
+      },
+      medium: {
+        name: 'Medium',
+        tickRate: 150,
+        obstacles: [],
+        description: 'Normal speed, no obstacles'
+      },
+      hard: {
+        name: 'Hard',
+        tickRate: 100,
+        obstacles: [
+          // Center obstacles
+          { x: 9, y: 7 }, { x: 10, y: 7 },
+          { x: 9, y: 8 }, { x: 10, y: 8 }
+        ],
+        description: 'Fast speed, center obstacle'
+      },
+      expert: {
+        name: 'Expert',
+        tickRate: 75,
+        obstacles: [
+          // Center cross
+          { x: 10, y: 5 }, { x: 10, y: 6 }, { x: 10, y: 7 }, { x: 10, y: 8 }, { x: 10, y: 9 },
+          { x: 8, y: 7 }, { x: 9, y: 7 }, { x: 11, y: 7 }, { x: 12, y: 7 },
+          // Corner obstacles
+          { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 3, y: 4 },
+          { x: 16, y: 3 }, { x: 15, y: 3 }, { x: 16, y: 4 },
+          { x: 3, y: 11 }, { x: 4, y: 11 }, { x: 3, y: 10 },
+          { x: 16, y: 11 }, { x: 15, y: 11 }, { x: 16, y: 10 }
+        ],
+        description: 'Very fast, many obstacles'
+      }
+    };
+
+    let currentLevel = null;
+    let showingLevelSelect = true;
     let snake = [];
     let direction = { x: 1, y: 0 };
     let nextDirection = { x: 1, y: 0 };
     let food = { x: 0, y: 0 };
+    let obstacles = [];
     let score = 0;
-    let highScore = parseInt(localStorage.getItem('theminal-snake-highscore') || '0');
     let gameInterval = null;
     let isGameOver = false;
     let isPaused = false;
+
+    function getHighScore(level) {
+      return parseInt(localStorage.getItem('theminal-snake-highscore-' + level) || '0');
+    }
+
+    function setHighScore(level, score) {
+      localStorage.setItem('theminal-snake-highscore-' + level, score.toString());
+    }
 
     function init() {
       snake = [
@@ -131,8 +181,56 @@
       score = 0;
       isGameOver = false;
       isPaused = false;
+      obstacles = currentLevel ? LEVELS[currentLevel].obstacles : [];
       spawnFood();
       render();
+    }
+
+    function selectLevel(level) {
+      currentLevel = level;
+      showingLevelSelect = false;
+      init();
+      startGame();
+    }
+
+    function showLevelSelection() {
+      showingLevelSelect = true;
+      currentLevel = null;
+      if (gameInterval) clearInterval(gameInterval);
+      gameInterval = null;
+      renderLevelSelect();
+    }
+
+    function renderLevelSelect() {
+      let output = '';
+
+      // Header
+      output += '<div class="snake-header">';
+      output += '<span class="snake-title">[SNAKE]</span>';
+      output += '<span class="snake-score">Select Level</span>';
+      output += '<button class="snake-close" onclick="window.closeSnakeGame()">[x] close</button>';
+      output += '</div>';
+
+      // Level selection
+      output += '<div class="snake-level-select">';
+      output += '<div class="snake-level-title">Choose Difficulty</div>';
+      output += '<div class="snake-level-grid">';
+
+      Object.keys(LEVELS).forEach((key, index) => {
+        const level = LEVELS[key];
+        const highScore = getHighScore(key);
+        output += '<button class="snake-level-btn" onclick="window.snakeSelectLevel(\'' + key + '\')">';
+        output += '<span class="snake-level-name">[' + (index + 1) + '] ' + level.name + '</span>';
+        output += '<span class="snake-level-desc">' + level.description + '</span>';
+        output += '<span class="snake-level-highscore">High Score: ' + highScore + '</span>';
+        output += '</button>';
+      });
+
+      output += '</div>';
+      output += '<div class="snake-level-hint">Press 1-4 or click to select</div>';
+      output += '</div>';
+
+      snakeGameContainer.innerHTML = output;
     }
 
     function spawnFood() {
@@ -141,7 +239,10 @@
           x: Math.floor(Math.random() * GRID_WIDTH),
           y: Math.floor(Math.random() * GRID_HEIGHT)
         };
-      } while (snake.some(seg => seg.x === food.x && seg.y === food.y));
+      } while (
+        snake.some(seg => seg.x === food.x && seg.y === food.y) ||
+        obstacles.some(obs => obs.x === food.x && obs.y === food.y)
+      );
     }
 
     function update() {
@@ -166,6 +267,12 @@
         return;
       }
 
+      // Obstacle collision
+      if (obstacles.some(obs => obs.x === head.x && obs.y === head.y)) {
+        gameOver();
+        return;
+      }
+
       snake.unshift(head);
 
       // Food collision
@@ -181,19 +288,20 @@
 
     function gameOver() {
       isGameOver = true;
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('theminal-snake-highscore', highScore.toString());
+      if (currentLevel && score > getHighScore(currentLevel)) {
+        setHighScore(currentLevel, score);
       }
       render();
     }
 
     function render() {
       let output = '';
+      const levelInfo = currentLevel ? LEVELS[currentLevel] : null;
+      const highScore = currentLevel ? getHighScore(currentLevel) : 0;
 
       // Header
       output += '<div class="snake-header">';
-      output += '<span class="snake-title">[SNAKE]</span>';
+      output += '<span class="snake-title">[SNAKE' + (levelInfo ? ' - ' + levelInfo.name : '') + ']</span>';
       output += '<span class="snake-score">Score: ' + score + ' | High: ' + highScore + '</span>';
       output += '<button class="snake-close" onclick="window.closeSnakeGame()">[x] close</button>';
       output += '</div>';
@@ -211,6 +319,7 @@
           const isHead = snake[0].x === x && snake[0].y === y;
           const isBody = snake.slice(1).some(seg => seg.x === x && seg.y === y);
           const isFood = food.x === x && food.y === y;
+          const isObstacle = obstacles.some(obs => obs.x === x && obs.y === y);
 
           if (isHead) {
             output += '<span class="snake-head">@@</span>';
@@ -218,6 +327,8 @@
             output += '<span class="snake-body">[]</span>';
           } else if (isFood) {
             output += '<span class="snake-food">**</span>';
+          } else if (isObstacle) {
+            output += '<span class="snake-obstacle">##</span>';
           } else {
             output += '  ';
           }
@@ -234,12 +345,12 @@
       output += '<div class="snake-controls">';
       if (isGameOver) {
         output += '<span class="snake-gameover">GAME OVER!</span> ';
-        output += '<span class="snake-hint snake-hint-desktop">Press [R] to restart or [ESC] to exit</span>';
+        output += '<span class="snake-hint snake-hint-desktop">Press [R] restart | [L] levels | [ESC] exit</span>';
       } else if (isPaused) {
         output += '<span class="snake-paused">PAUSED</span> ';
-        output += '<span class="snake-hint snake-hint-desktop">Press [P] to resume</span>';
+        output += '<span class="snake-hint snake-hint-desktop">Press [P] to resume | [L] levels</span>';
       } else {
-        output += '<span class="snake-hint snake-hint-desktop">Controls: Arrow keys or WASD | [P] Pause | [ESC] Exit</span>';
+        output += '<span class="snake-hint snake-hint-desktop">Arrow keys/WASD | [P] Pause | [L] Levels | [ESC] Exit</span>';
         output += '<span class="snake-hint snake-hint-mobile">Swipe to move</span>';
       }
       output += '</div>';
@@ -249,9 +360,11 @@
       output += '<div class="snake-btn-actions">';
       if (isGameOver) {
         output += '<button class="snake-btn-action" onclick="window.snakeAction(\'restart\')">Restart</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'levels\')">Levels</button>';
         output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">Close</button>';
       } else {
         output += '<button class="snake-btn-action" onclick="window.snakeAction(\'pause\')">' + (isPaused ? 'Resume' : 'Pause') + '</button>';
+        output += '<button class="snake-btn-action" onclick="window.snakeAction(\'levels\')">Levels</button>';
         output += '<button class="snake-btn-action" onclick="window.snakeAction(\'close\')">Close</button>';
       }
       output += '</div>';
@@ -355,8 +468,27 @@
 
       const key = e.key.toLowerCase();
 
+      // Handle level selection screen
+      if (showingLevelSelect) {
+        if (['1', '2', '3', '4', 'escape'].includes(key)) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        const levelKeys = { '1': 'easy', '2': 'medium', '3': 'hard', '4': 'expert' };
+        if (levelKeys[key]) {
+          selectLevel(levelKeys[key]);
+          return;
+        }
+        if (key === 'escape') {
+          closeGame();
+          return;
+        }
+        return;
+      }
+
       // Prevent default for game keys
-      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'p', 'r', 'escape'].includes(key)) {
+      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'p', 'r', 'l', 'escape'].includes(key)) {
         e.preventDefault();
         e.stopPropagation();
       }
@@ -365,6 +497,8 @@
         if (key === 'r') {
           init();
           startGame();
+        } else if (key === 'l') {
+          showLevelSelection();
         } else if (key === 'escape') {
           closeGame();
         }
@@ -373,6 +507,11 @@
 
       if (key === 'escape') {
         closeGame();
+        return;
+      }
+
+      if (key === 'l') {
+        showLevelSelection();
         return;
       }
 
@@ -407,7 +546,8 @@
 
     function startGame() {
       if (gameInterval) clearInterval(gameInterval);
-      gameInterval = setInterval(update, TICK_RATE);
+      const tickRate = currentLevel ? LEVELS[currentLevel].tickRate : 150;
+      gameInterval = setInterval(update, tickRate);
     }
 
     function closeGame() {
@@ -444,14 +584,19 @@
 
       switch (action) {
         case 'pause':
-          if (!isGameOver) {
+          if (!isGameOver && !showingLevelSelect) {
             isPaused = !isPaused;
             render();
           }
           break;
         case 'restart':
-          init();
-          startGame();
+          if (!showingLevelSelect) {
+            init();
+            startGame();
+          }
+          break;
+        case 'levels':
+          showLevelSelection();
           break;
         case 'close':
           closeGame();
@@ -461,15 +606,15 @@
 
     return {
       start: function() {
-        init();
         snakeGameContainer.classList.add('visible');
         setupTouchControls();
-        startGame();
+        showLevelSelection();
       },
       close: closeGame,
       handleKey: handleKey,
       setDirection: setDirection,
       handleAction: handleAction,
+      selectLevel: selectLevel,
       isVisible: function() {
         return snakeGameContainer.classList.contains('visible');
       }
@@ -499,6 +644,10 @@
 
   window.snakeAction = function(action) {
     if (snakeGame) snakeGame.handleAction(action);
+  };
+
+  window.snakeSelectLevel = function(level) {
+    if (snakeGame) snakeGame.selectLevel(level);
   };
 
   // ============================================

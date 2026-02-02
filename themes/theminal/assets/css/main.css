@@ -670,6 +670,97 @@ a:hover {
   font-weight: 600;
 }
 
+.snake-obstacle {
+  color: var(--accent-red);
+  font-weight: bold;
+}
+
+/* Snake Level Selection */
+.snake-level-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.snake-level-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.snake-level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.snake-level-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px;
+  background: var(--bg-window);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-align: center;
+}
+
+.snake-level-btn:hover {
+  border-color: var(--accent-green);
+  background: rgba(63, 185, 80, 0.1);
+}
+
+.snake-level-btn:active {
+  background: rgba(63, 185, 80, 0.2);
+}
+
+.snake-level-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-green);
+}
+
+.snake-level-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.snake-level-highscore {
+  font-size: 10px;
+  color: var(--accent-yellow);
+  margin-top: 4px;
+}
+
+.snake-level-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Responsive level selection */
+@media (max-width: 480px) {
+  .snake-level-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .snake-level-btn {
+    padding: 14px 10px;
+  }
+}
+
 .snake-hint {
   color: var(--text-muted);
 }
