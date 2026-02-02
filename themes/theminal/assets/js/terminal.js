@@ -115,38 +115,31 @@
         name: 'Easy',
         tickRate: 200,
         obstacles: [],
-        description: 'Slow speed, no obstacles'
+        description: 'Slow speed'
       },
       medium: {
         name: 'Medium',
-        tickRate: 150,
-        obstacles: [],
-        description: 'Normal speed, no obstacles'
+        tickRate: 130,
+        obstacles: [
+          // Small center obstacle
+          { x: 9, y: 7 }, { x: 10, y: 7 }
+        ],
+        description: 'Normal speed'
       },
       hard: {
         name: 'Hard',
-        tickRate: 100,
-        obstacles: [
-          // Center obstacles
-          { x: 9, y: 7 }, { x: 10, y: 7 },
-          { x: 9, y: 8 }, { x: 10, y: 8 }
-        ],
-        description: 'Fast speed, center obstacle'
-      },
-      expert: {
-        name: 'Expert',
-        tickRate: 75,
+        tickRate: 80,
         obstacles: [
           // Center cross
           { x: 10, y: 5 }, { x: 10, y: 6 }, { x: 10, y: 7 }, { x: 10, y: 8 }, { x: 10, y: 9 },
           { x: 8, y: 7 }, { x: 9, y: 7 }, { x: 11, y: 7 }, { x: 12, y: 7 },
           // Corner obstacles
-          { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 3, y: 4 },
-          { x: 16, y: 3 }, { x: 15, y: 3 }, { x: 16, y: 4 },
-          { x: 3, y: 11 }, { x: 4, y: 11 }, { x: 3, y: 10 },
-          { x: 16, y: 11 }, { x: 15, y: 11 }, { x: 16, y: 10 }
+          { x: 3, y: 3 }, { x: 4, y: 3 },
+          { x: 16, y: 3 }, { x: 15, y: 3 },
+          { x: 3, y: 11 }, { x: 4, y: 11 },
+          { x: 16, y: 11 }, { x: 15, y: 11 }
         ],
-        description: 'Very fast, many obstacles'
+        description: 'Fast + obstacles'
       }
     };
 
@@ -207,27 +200,29 @@
       // Header
       output += '<div class="snake-header">';
       output += '<span class="snake-title">[SNAKE]</span>';
-      output += '<span class="snake-score">Select Level</span>';
+      output += '<span class="snake-score">Select Difficulty</span>';
       output += '<button class="snake-close" onclick="window.closeSnakeGame()">[x] close</button>';
       output += '</div>';
 
-      // Level selection
+      // Level selection - 3 buttons
       output += '<div class="snake-level-select">';
-      output += '<div class="snake-level-title">Choose Difficulty</div>';
-      output += '<div class="snake-level-grid">';
+      output += '<div class="snake-level-buttons">';
 
-      Object.keys(LEVELS).forEach((key, index) => {
+      const levelKeys = ['easy', 'medium', 'hard'];
+      levelKeys.forEach((key, index) => {
         const level = LEVELS[key];
         const highScore = getHighScore(key);
-        output += '<button class="snake-level-btn" onclick="window.snakeSelectLevel(\'' + key + '\')">';
-        output += '<span class="snake-level-name">[' + (index + 1) + '] ' + level.name + '</span>';
+        output += '<button class="snake-level-btn snake-level-' + key + '" onclick="window.snakeSelectLevel(\'' + key + '\')">';
+        output += '<span class="snake-level-name">' + level.name + '</span>';
         output += '<span class="snake-level-desc">' + level.description + '</span>';
-        output += '<span class="snake-level-highscore">High Score: ' + highScore + '</span>';
+        if (highScore > 0) {
+          output += '<span class="snake-level-highscore">Best: ' + highScore + '</span>';
+        }
         output += '</button>';
       });
 
       output += '</div>';
-      output += '<div class="snake-level-hint">Press 1-4 or click to select</div>';
+      output += '<div class="snake-level-hint">Click to start or press [1] [2] [3]</div>';
       output += '</div>';
 
       snakeGameContainer.innerHTML = output;
@@ -470,12 +465,12 @@
 
       // Handle level selection screen
       if (showingLevelSelect) {
-        if (['1', '2', '3', '4', 'escape'].includes(key)) {
+        if (['1', '2', '3', 'escape'].includes(key)) {
           e.preventDefault();
           e.stopPropagation();
         }
 
-        const levelKeys = { '1': 'easy', '2': 'medium', '3': 'hard', '4': 'expert' };
+        const levelKeys = { '1': 'easy', '2': 'medium', '3': 'hard' };
         if (levelKeys[key]) {
           selectLevel(levelKeys[key]);
           return;
