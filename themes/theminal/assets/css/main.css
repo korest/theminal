@@ -670,6 +670,125 @@ a:hover {
   font-weight: 600;
 }
 
+.snake-obstacle {
+  color: var(--accent-red);
+  font-weight: bold;
+}
+
+/* Snake Level Selection */
+.snake-level-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.snake-level-buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.snake-level-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 24px;
+  background: var(--bg-window);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-align: center;
+  min-width: 100px;
+}
+
+.snake-level-btn:hover {
+  transform: translateY(-2px);
+}
+
+.snake-level-btn:active {
+  transform: translateY(0);
+}
+
+/* Easy button - green */
+.snake-level-easy {
+  border-color: var(--accent-green);
+}
+.snake-level-easy:hover {
+  background: rgba(63, 185, 80, 0.15);
+  box-shadow: 0 4px 12px rgba(63, 185, 80, 0.2);
+}
+.snake-level-easy .snake-level-name {
+  color: var(--accent-green);
+}
+
+/* Medium button - yellow */
+.snake-level-medium {
+  border-color: var(--accent-yellow);
+}
+.snake-level-medium:hover {
+  background: rgba(227, 179, 65, 0.15);
+  box-shadow: 0 4px 12px rgba(227, 179, 65, 0.2);
+}
+.snake-level-medium .snake-level-name {
+  color: var(--accent-yellow);
+}
+
+/* Hard button - red */
+.snake-level-hard {
+  border-color: var(--accent-red);
+}
+.snake-level-hard:hover {
+  background: rgba(248, 81, 73, 0.15);
+  box-shadow: 0 4px 12px rgba(248, 81, 73, 0.2);
+}
+.snake-level-hard .snake-level-name {
+  color: var(--accent-red);
+}
+
+.snake-level-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.snake-level-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.snake-level-highscore {
+  font-size: 9px;
+  color: var(--accent-cyan);
+  margin-top: 4px;
+}
+
+.snake-level-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Responsive level selection */
+@media (max-width: 480px) {
+  .snake-level-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .snake-level-btn {
+    width: 100%;
+    max-width: 200px;
+    padding: 14px 20px;
+  }
+}
+
 .snake-hint {
   color: var(--text-muted);
 }
